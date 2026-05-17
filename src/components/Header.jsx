@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,8 +17,11 @@ const Header = () => {
                         <a href="#features" className="hover:text-black transition-colors">
                             Features
                         </a>
-                        <a href="#workspace" className="hover:text-black transition-colors">
-                            Workspace
+                        <a href="workspace" className="hover:text-black transition-colors">
+                            <Link to="/workspace" className="logo-text">
+                                Workspace
+                            </Link>
+
                         </a>
                         <a href="#notes" className="hover:text-black transition-colors">
                             Notes
