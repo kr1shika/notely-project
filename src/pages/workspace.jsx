@@ -1,13 +1,12 @@
 export default function NotesWorkspace() {
     return (
-        <div className="h-screen bg-[#f7f6f3] flex overflow-hidden text-black">
+        <div className="h-screen bg-[#f9f0d6] flex overflow-hidden text-black">
             {/* SIDEBAR */}
-            <aside className="w-[290px] border-r border-black/5 bg-[#fbfbfb] flex flex-col">
+            <aside className="w-[290px] border-r border-black/5 bg-[#f9f0d6] flex flex-col">
 
                 {/* TOP */}
                 <div className="p-4 border-b border-black/5">
                     <div className="flex items-center gap-3">
-
 
                         <div>
                             <h2 className="font-semibold text-lg">Notely</h2>
@@ -63,7 +62,7 @@ export default function NotesWorkspace() {
             <main className="flex-1 overflow-y-auto">
 
                 {/* TOPBAR */}
-                <div className="h-16 border-b border-black/5 flex items-center justify-between px-8 bg-[#f7f6f3]/80 backdrop-blur sticky top-0 z-20">
+                <div className="h-16 border-b border-black/5 flex items-center justify-between px-8 bg-[#f9f0d6]/80 backdrop-blur sticky top-0 z-20">
                     <div className="flex items-center gap-3 text-sm text-black/50">
                         <span>Workspace</span>
                         <span>/</span>
@@ -84,10 +83,8 @@ export default function NotesWorkspace() {
                 </div>
 
                 {/* EDITOR */}
-                <div className="max-w-4xl mx-auto px-8 py-16">
-
-                    {/* COVER */}
-                    <div className="h-64 rounded-[2rem] bg-gradient-to-br from-zinc-200 to-zinc-100 mb-10 shadow-inner"></div>
+                <div className="max-w-4xl mx-auto px-8 py-10">
+                    {/* add cover image later */}
 
                     {/* TITLE */}
                     <input
