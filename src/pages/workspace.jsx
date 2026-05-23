@@ -1,18 +1,47 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // ← Make sure this path is correct
+
 export default function NotesWorkspace() {
+    const { user, loading, logout } = useAuth();  // ← This will work now
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!loading && !user) {
+            navigate('/login');
+        }
+    }, [user, loading, navigate]);
+
+    if (loading) {
+        return (
+            <div className="h-screen bg-[#f9f0d6] flex items-center justify-center">
+                <div className="text-xl">Loading...</div>
+            </div>
+        );
+    }
+
+    if (!user) return null;
+
     return (
         <div className="h-screen bg-[#f9f0d6] flex overflow-hidden text-black">
             {/* SIDEBAR */}
             <aside className="w-[290px] border-r border-black/5 bg-[#f9f0d6] flex flex-col">
-
                 {/* TOP */}
                 <div className="p-4 border-b border-black/5">
-                    <div className="flex items-center gap-3">
-
+                    <div className="flex items-center justify-between gap-3">
                         <div>
                             <h2 className="font-semibold text-lg">Notely</h2>
+                            <p className="text-xs text-black/50 mt-1">{user?.email}</p>
                         </div>
+                        <button
+                            onClick={logout}
+                            className="text-xs px-3 py-1 rounded-lg bg-black/5 hover:bg-black/10 transition-colors"
+                        >
+                            Logout
+                        </button>
                     </div>
                 </div>
+
                 {/* SEARCH */}
                 <div className="p-4">
                     <input
@@ -47,8 +76,8 @@ export default function NotesWorkspace() {
                             <button
                                 key={index}
                                 className={`w-full text-left px-4 py-3 rounded-xl transition-colors ${index === 0
-                                    ? "bg-black text-white"
-                                    : "hover:bg-black/5 text-black/70"
+                                        ? "bg-black text-white"
+                                        : "hover:bg-black/5 text-black/70"
                                     }`}
                             >
                                 📄 {note}
@@ -60,7 +89,6 @@ export default function NotesWorkspace() {
 
             {/* MAIN */}
             <main className="flex-1 overflow-y-auto">
-
                 {/* TOPBAR */}
                 <div className="h-16 border-b border-black/5 flex items-center justify-between px-8 bg-[#f9f0d6]/80 backdrop-blur sticky top-0 z-20">
                     <div className="flex items-center gap-3 text-sm text-black/50">
@@ -75,7 +103,6 @@ export default function NotesWorkspace() {
                         <button className="px-4 py-2 rounded-lg hover:bg-black/5 transition-colors text-sm">
                             Share
                         </button>
-
                         <button className="px-4 py-2 rounded-lg bg-black text-white text-sm hover:opacity-90 transition-opacity">
                             Save
                         </button>
@@ -84,8 +111,6 @@ export default function NotesWorkspace() {
 
                 {/* EDITOR */}
                 <div className="max-w-4xl mx-auto px-8 py-10">
-                    {/* add cover image later */}
-
                     {/* TITLE */}
                     <input
                         type="text"
@@ -95,8 +120,8 @@ export default function NotesWorkspace() {
 
                     {/* META */}
                     <div className="flex items-center gap-6 mt-6 text-sm text-black/40">
-                        <p>Edited 2 mins ago</p>
-                        <p>5 min read</p>
+                        <p>Welcome, {user?.username}!</p>
+                        <p>Edited just now</p>
                     </div>
 
                     {/* CONTENT */}
@@ -104,12 +129,10 @@ export default function NotesWorkspace() {
                         <textarea
                             className="w-full min-h-[180px] bg-transparent outline-none resize-none placeholder:text-black/30"
                             placeholder="Start writing..."
-                            defaultValue={`Welcome to Notely.
+                            defaultValue={`Welcome to Notely, ${user?.username}!
 
 This is your personal workspace where you can write notes, organize projects, and store ideas.`}
                         />
-
-
 
                         <textarea
                             className="w-full min-h-[300px] bg-transparent outline-none resize-none placeholder:text-black/30"
@@ -119,5 +142,5 @@ This is your personal workspace where you can write notes, organize projects, an
                 </div>
             </main>
         </div>
-    )
+    );
 }

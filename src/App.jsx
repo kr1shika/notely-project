@@ -1,55 +1,50 @@
-import { Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import './App.css';
+import ErrorBoundary from "./components/ErrorBoundary";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import NotesWorkspace from './pages/workspace';
+import NotesWorkspace from "./pages/workspace";
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="h-screen bg-[#f9f0d6] flex items-center justify-center">Loading...</div>;
+  }
+
+  return user ? children : <Navigate to="/login" />;
+}
+
+function AppContent() {
+  return (
+    <ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/workspace"
+          element={
+            <ProtectedRoute>
+              <NotesWorkspace />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </ErrorBoundary>
+  );
+}
 
 function App() {
-
-  const allroutes = [
-    {
-      path: "/workspace",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <NotesWorkspace />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Landing />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/login",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Login />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/register",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Register />
-        </Suspense>
-      ),
-    },
-
-  ];
-  const routes = createBrowserRouter([...allroutes]);
-
   return (
-    <>
-      <RouterProvider router={routes} />
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
