@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';  // ← Go up one level to src, then context
+import { useAuth } from '../context/AuthContext1';  // ← Go up one level to src, then context
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {

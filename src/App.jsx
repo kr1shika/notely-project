@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import './App.css';
 import ErrorBoundary from "./components/ErrorBoundary";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext1";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
