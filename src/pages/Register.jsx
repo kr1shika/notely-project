@@ -37,10 +37,8 @@ export default function Register() {
     } else {
       setError(result.error);
     }
-    
     setLoading(false);
   };
-
     return (
         <div className="min-h-screen bg-[#f7f6f3] flex items-center justify-center px-6">
             <div className="w-full max-w-md bg-white rounded-[2rem] shadow-xl border border-black/5 p-10">
