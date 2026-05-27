@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext1';
-import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
   const auth = useAuth(); // Get the whole object first
-  
+
   // Check if auth exists (in case it's not wrapped properly)
   if (!auth) {
     return (
@@ -16,16 +16,16 @@ export default function Login() {
       </div>
     );
   }
-  
+
   const { login } = auth; // Now safely destructure
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -43,11 +43,13 @@ export default function Login() {
     const result = await login(formData.email, formData.password);
 
     if (result.success) {
+      console.log('About to navigate to /workspace');
       navigate('/workspace');
+      console.log('Navigate called');
     } else {
       setError(result.error);
     }
-    
+
     setLoading(false);
   };
 
@@ -103,7 +105,7 @@ export default function Login() {
             />
           </div>
 
-          <button 
+          <button
             type="submit"
             disabled={loading}
             className="w-full py-4 rounded-2xl bg-black text-white font-semibold hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"

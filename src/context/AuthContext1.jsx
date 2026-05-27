@@ -72,6 +72,10 @@ export const AuthProvider = ({ children }) => {
             // Get user info
             const userResponse = await api.get('/users/me');
             console.log('User response:', userResponse);
+            console.log('Login function called');
+            // ... after successful login
+            console.log('Returning success: true');
+            return { success: true };
 
             return { success: true, user: userResponse.data };
         } catch (error) {
