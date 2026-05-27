@@ -51,8 +51,11 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
+            console.log('Login attempt for:', email);
+            console.log('API URL:', api.defaults.baseURL);
+
             const formData = new URLSearchParams();
-            formData.append('username', email); // Email goes in username field!
+            formData.append('username', email);  // IMPORTANT: 'username' not 'email'
             formData.append('password', password);
 
             const response = await api.post('/token', formData, {
@@ -61,15 +64,18 @@ export const AuthProvider = ({ children }) => {
                 },
             });
 
+            console.log('Login response:', response);
+
             const { access_token } = response.data;
             localStorage.setItem('access_token', access_token);
 
-            // Fetch user data
+            // Get user info
             const userResponse = await api.get('/users/me');
-            setUser(userResponse.data);
+            console.log('User response:', userResponse);
 
-            return { success: true };
+            return { success: true, user: userResponse.data };
         } catch (error) {
+            console.error('Login error:', error.response?.status, error.response?.data);
             return {
                 success: false,
                 error: error.response?.data?.detail || 'Login failed'

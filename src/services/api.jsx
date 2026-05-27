@@ -9,6 +9,8 @@ const api = axios.create({
   },
 });
 
+console.log('API URL:', API_URL);
+
 // Add token to requests if it exists
 api.interceptors.request.use(
   (config) => {
