@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext1';
+import { useDebounce } from '../hooks/useDebounce';
 import { noteService } from '../services/noteService';
 
 export default function NotesWorkspace() {
@@ -14,6 +15,14 @@ export default function NotesWorkspace() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+
+    // Local state for editing (for smooth typing)
+    const [localTitle, setLocalTitle] = useState('');
+    const [localContent, setLocalContent] = useState('');
+
+    // Debounce the save operations
+    const debouncedTitle = useDebounce(localTitle, 800);
+    const debouncedContent = useDebounce(localContent, 800);
 
     // Load notes on component mount
     useEffect(() => {
@@ -29,6 +38,28 @@ export default function NotesWorkspace() {
         }
     }, [user, showArchived]);
 
+    // Save title when debounced value changes
+    useEffect(() => {
+        if (activeNote && debouncedTitle !== activeNote.title) {
+            updateNote(activeNote.id, { title: debouncedTitle });
+        }
+    }, [debouncedTitle]);
+
+    // Save content when debounced value changes
+    useEffect(() => {
+        if (activeNote && debouncedContent !== activeNote.content) {
+            updateNote(activeNote.id, { content: debouncedContent });
+        }
+    }, [debouncedContent]);
+
+    // Update local state when active note changes
+    useEffect(() => {
+        if (activeNote) {
+            setLocalTitle(activeNote.title || '');
+            setLocalContent(activeNote.content || '');
+        }
+    }, [activeNote]);
+
     const fetchNotes = async () => {
         setLoading(true);
         setError('');
@@ -38,7 +69,6 @@ export default function NotesWorkspace() {
                 : await noteService.getNotes();
             setNotes(data);
 
-            // Set active note to first note if none selected and notes exist
             if (!activeNote && data.length > 0) {
                 setActiveNote(data[0]);
             } else if (data.length === 0) {
@@ -99,7 +129,7 @@ export default function NotesWorkspace() {
     const archiveNote = async (id) => {
         try {
             await noteService.archiveNote(id);
-            await fetchNotes(); // Refresh the list
+            await fetchNotes();
             if (activeNote?.id === id) {
                 setActiveNote(null);
             }
@@ -110,15 +140,11 @@ export default function NotesWorkspace() {
     };
 
     const handleTitleChange = (e) => {
-        if (activeNote) {
-            updateNote(activeNote.id, { title: e.target.value });
-        }
+        setLocalTitle(e.target.value); // Only update local state, no API call yet
     };
 
     const handleContentChange = (e) => {
-        if (activeNote) {
-            updateNote(activeNote.id, { content: e.target.value });
-        }
+        setLocalContent(e.target.value); // Only update local state, no API call yet
     };
 
     const filteredNotes = notes.filter(note =>
@@ -137,9 +163,8 @@ export default function NotesWorkspace() {
 
     return (
         <div className="h-screen bg-[#f9f0d6] flex overflow-hidden text-black">
-            {/* SIDEBAR */}
+            {/* SIDEBAR - Same as before */}
             <aside className="w-[290px] border-r border-black/5 bg-[#f9f0d6] flex flex-col">
-                {/* User Info */}
                 <div className="p-4 border-b border-black/5">
                     <div className="flex items-center justify-between gap-3">
                         <div>
@@ -155,7 +180,6 @@ export default function NotesWorkspace() {
                     </div>
                 </div>
 
-                {/* Search */}
                 <div className="p-4">
                     <input
                         type="text"
@@ -166,7 +190,6 @@ export default function NotesWorkspace() {
                     />
                 </div>
 
-                {/* Actions */}
                 <div className="px-4 pb-4 space-y-2">
                     <button
                         onClick={createNewNote}
@@ -184,7 +207,6 @@ export default function NotesWorkspace() {
                     </button>
                 </div>
 
-                {/* Error Message */}
                 {error && (
                     <div className="mx-4 mb-4 p-2 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs">
                         {error}
@@ -192,7 +214,6 @@ export default function NotesWorkspace() {
                     </div>
                 )}
 
-                {/* Notes List */}
                 <div className="flex-1 overflow-y-auto px-3 pb-6">
                     <p className="px-3 mb-3 text-xs uppercase tracking-[0.2em] text-black/40">
                         {showArchived ? 'Archived Notes' : 'All Notes'} ({filteredNotes.length})
@@ -209,8 +230,8 @@ export default function NotesWorkspace() {
                                     <button
                                         onClick={() => setActiveNote(note)}
                                         className={`w-full text-left px-4 py-3 rounded-xl transition-colors ${activeNote?.id === note.id
-                                            ? "bg-black text-white"
-                                            : "hover:bg-black/5 text-black/70"
+                                                ? "bg-black text-white"
+                                                : "hover:bg-black/5 text-black/70"
                                             }`}
                                     >
                                         <div className="font-medium truncate">{note.title || 'Untitled'}</div>
@@ -219,7 +240,6 @@ export default function NotesWorkspace() {
                                         </div>
                                     </button>
 
-                                    {/* Note Actions */}
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                                         {!showArchived && (
                                             <button
@@ -255,13 +275,12 @@ export default function NotesWorkspace() {
             <main className="flex-1 overflow-y-auto">
                 {activeNote ? (
                     <>
-                        {/* Top Bar */}
                         <div className="h-16 border-b border-black/5 flex items-center justify-between px-8 bg-[#f9f0d6]/80 backdrop-blur sticky top-0 z-20">
                             <div className="flex items-center gap-3 text-sm text-black/50">
                                 <span>Workspace</span>
                                 <span>/</span>
                                 <span className="text-black font-medium">
-                                    {activeNote.title || 'Untitled'}
+                                    {localTitle || 'Untitled'}
                                 </span>
                             </div>
 
@@ -279,32 +298,32 @@ export default function NotesWorkspace() {
                                     Delete
                                 </button>
                                 <div className="text-xs text-black/40 px-2">
-                                    {saving ? 'Saving...' : 'Saved'}
+                                    {saving ? 'Saving...' :
+                                        (debouncedTitle !== activeNote.title || debouncedContent !== activeNote.content) ? 'Unsaved changes...' : 'Saved'}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Editor */}
                         <div className="max-w-4xl mx-auto px-8 py-10">
-                            {/* Title Input */}
                             <input
                                 type="text"
-                                value={activeNote.title || ''}
+                                value={localTitle}
                                 onChange={handleTitleChange}
                                 placeholder="Untitled"
                                 className="w-full bg-transparent text-6xl font-black tracking-tight outline-none placeholder:text-black/20"
                             />
 
-                            {/* Meta Info */}
                             <div className="flex items-center gap-6 mt-6 text-sm text-black/40">
                                 <p>Last edited {new Date(activeNote.updated_at || activeNote.created_at).toLocaleString()}</p>
-                                <p>{activeNote.content?.length || 0} characters</p>
+                                <p>{localContent.length} characters</p>
+                                <p className="text-green-600">
+                                    {debouncedTitle === activeNote.title && debouncedContent === activeNote.content ? '✓ Saved' : '⌛ Saving...'}
+                                </p>
                             </div>
 
-                            {/* Content Textarea */}
                             <div className="mt-14">
                                 <textarea
-                                    value={activeNote.content || ''}
+                                    value={localContent}
                                     onChange={handleContentChange}
                                     placeholder="Start writing your note here..."
                                     className="w-full min-h-[500px] bg-transparent outline-none resize-none text-lg leading-9 text-black/75 placeholder:text-black/30"
@@ -313,7 +332,6 @@ export default function NotesWorkspace() {
                         </div>
                     </>
                 ) : (
-                    // Empty state when no notes
                     <div className="flex flex-col items-center justify-center h-full text-center">
                         <div className="max-w-md">
                             <h2 className="text-3xl font-bold mb-4">Welcome to Notely</h2>
