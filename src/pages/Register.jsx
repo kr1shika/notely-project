@@ -59,7 +59,6 @@ export default function Register() {
                     </div>
                 )}
 
-                {/* FORM */}
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label className="text-sm font-medium mb-2 block">
@@ -75,7 +74,6 @@ export default function Register() {
                             className="w-full px-5 py-4 rounded-2xl border border-black/10 outline-none focus:ring-2 focus:ring-black/10"
                         />
                     </div>
-
                     <div>
                         <label className="text-sm font-medium mb-2 block">
                             Email

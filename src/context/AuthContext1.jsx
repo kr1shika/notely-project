@@ -52,10 +52,9 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             console.log('Login attempt for:', email);
-            console.log('API URL:', api.defaults.baseURL);
 
             const formData = new URLSearchParams();
-            formData.append('username', email);  // IMPORTANT: 'username' not 'email'
+            formData.append('username', email);
             formData.append('password', password);
 
             const response = await api.post('/token', formData, {
@@ -64,25 +63,29 @@ export const AuthProvider = ({ children }) => {
                 },
             });
 
-            console.log('Login response:', response);
-
             const { access_token } = response.data;
+
             localStorage.setItem('access_token', access_token);
 
-            // Get user info
+            // Fetch logged in user
             const userResponse = await api.get('/users/me');
-            console.log('User response:', userResponse);
-            console.log('Login function called');
-            // ... after successful login
-            console.log('Returning success: true');
-            return { success: true };
 
-            return { success: true, user: userResponse.data };
+            // IMPORTANT
+            setUser(userResponse.data);
+
+            console.log('User set successfully');
+
+            return {
+                success: true,
+                user: userResponse.data,
+            };
+
         } catch (error) {
-            console.error('Login error:', error.response?.status, error.response?.data);
+            console.error('Login error:', error);
+
             return {
                 success: false,
-                error: error.response?.data?.detail || 'Login failed'
+                error: error.response?.data?.detail || 'Login failed',
             };
         }
     };
