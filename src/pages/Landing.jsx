@@ -1,5 +1,7 @@
 import image1 from '../assets/land.png';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
+
 export default function Landing() {
     return (
         <div className="min-h-screen bg-[#f9f0d6] text-black font-sans">
@@ -29,8 +31,9 @@ export default function Landing() {
                         />
 
                         <button className="px-7 py-4 rounded-xl bg-black text-white font-medium hover:opacity-90 transition-opacity shadow-lg">
-                            Sign up
-                        </button>
+                            <Link to="/login" className="hover:text-black transition-colors">
+                                Workspace
+                            </Link>                        </button>
                     </div>
 
 
@@ -102,6 +105,8 @@ export default function Landing() {
                     </button>
                 </div>
             </section>
+            <Footer />
+
         </div>
     )
 }
