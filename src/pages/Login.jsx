@@ -3,9 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext1';
 
 export default function Login() {
-  const auth = useAuth(); // Get the whole object first
+  const auth = useAuth(); 
 
-  // Check if auth exists (in case it's not wrapped properly)
   if (!auth) {
     return (
       <div className="min-h-screen bg-[#f9f0d6] flex items-center justify-center">
@@ -17,7 +16,7 @@ export default function Login() {
     );
   }
 
-  const { login } = auth; // Now safely destructure
+  const { login } = auth; 
 
   const [formData, setFormData] = useState({
     email: '',

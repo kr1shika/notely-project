@@ -1,46 +1,46 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext1';  // ← Go up one level to src, then context
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext1'; 
 
 export default function Register() {
-  const { signup } = useAuth();  // ← This should work now
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { signup } = useAuth();  
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
     });
-  };
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    const navigate = useNavigate();
 
-    const result = await signup(
-      formData.username,
-      formData.email,
-      formData.password
-    );
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
-    if (result.success) {
-      navigate('/workspace');
-    } else {
-      setError(result.error);
-    }
-    setLoading(false);
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        const result = await signup(
+            formData.username,
+            formData.email,
+            formData.password
+        );
+
+        if (result.success) {
+            navigate('/workspace');
+        } else {
+            setError(result.error);
+        }
+        setLoading(false);
+    };
     return (
-        <div className="min-h-screen bg-[#f7f6f3] flex items-center justify-center px-6">
+        <div className="min-h-screen bg-[#f9f0d6] flex items-center justify-center px-6">
             <div className="w-full max-w-md bg-white rounded-[2rem] shadow-xl border border-black/5 p-10">
                 {/* LOGO */}
                 <div className="flex flex-col items-center text-center mb-10">
@@ -52,7 +52,6 @@ export default function Register() {
                     </p>
                 </div>
 
-                {/* ERROR MESSAGE */}
                 {error && (
                     <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
                         {error}

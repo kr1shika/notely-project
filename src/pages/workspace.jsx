@@ -7,7 +7,6 @@ import { noteService } from '../services/noteService';
 export default function NotesWorkspace() {
     const { user, loading: authLoading, logout } = useAuth();
     const navigate = useNavigate();
-
     const [notes, setNotes] = useState([]);
     const [activeNote, setActiveNote] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,44 +14,35 @@ export default function NotesWorkspace() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
-
-    // Local state for editing (for smooth typing)
     const [localTitle, setLocalTitle] = useState('');
     const [localContent, setLocalContent] = useState('');
-
-    // Debounce the save operations
     const debouncedTitle = useDebounce(localTitle, 800);
     const debouncedContent = useDebounce(localContent, 800);
 
-    // Load notes on component mount
     useEffect(() => {
         if (!authLoading && !user) {
             navigate('/login');
         }
     }, [user, authLoading, navigate]);
 
-    // Fetch notes when user is loaded
     useEffect(() => {
         if (user) {
             fetchNotes();
         }
     }, [user, showArchived]);
 
-    // Save title when debounced value changes
     useEffect(() => {
         if (activeNote && debouncedTitle !== activeNote.title) {
             updateNote(activeNote.id, { title: debouncedTitle });
         }
     }, [debouncedTitle]);
 
-    // Save content when debounced value changes
     useEffect(() => {
         if (activeNote && debouncedContent !== activeNote.content) {
             updateNote(activeNote.id, { content: debouncedContent });
         }
     }, [debouncedContent]);
 
-    // Update local state when active note changes
     useEffect(() => {
         if (activeNote) {
             setLocalTitle(activeNote.title || '');
@@ -140,11 +130,11 @@ export default function NotesWorkspace() {
     };
 
     const handleTitleChange = (e) => {
-        setLocalTitle(e.target.value); // Only update local state, no API call yet
+        setLocalTitle(e.target.value);
     };
 
     const handleContentChange = (e) => {
-        setLocalContent(e.target.value); // Only update local state, no API call yet
+        setLocalContent(e.target.value);
     };
 
     const filteredNotes = notes.filter(note =>
@@ -163,7 +153,6 @@ export default function NotesWorkspace() {
 
     return (
         <div className="h-screen bg-[#f9f0d6] flex overflow-hidden text-black">
-            {/* SIDEBAR - Same as before */}
             <aside className="w-[290px] border-r border-black/5 bg-[#f9f0d6] flex flex-col">
                 <div className="p-4 border-b border-black/5">
                     <div className="flex items-center justify-between gap-3">
@@ -203,7 +192,7 @@ export default function NotesWorkspace() {
                         onClick={() => setShowArchived(!showArchived)}
                         className="w-full border border-black/20 py-3 rounded-xl font-medium hover:bg-black/5 transition-opacity"
                     >
-                        {showArchived ? '← Back to Notes' : '📦 Archived'}
+                        {showArchived ? '← Back to Notes' : ' Archived'}
                     </button>
                 </div>
 
@@ -230,8 +219,8 @@ export default function NotesWorkspace() {
                                     <button
                                         onClick={() => setActiveNote(note)}
                                         className={`w-full text-left px-4 py-3 rounded-xl transition-colors ${activeNote?.id === note.id
-                                                ? "bg-black text-white"
-                                                : "hover:bg-black/5 text-black/70"
+                                            ? "bg-black text-white"
+                                            : "hover:bg-black/5 text-black/70"
                                             }`}
                                     >
                                         <div className="font-medium truncate">{note.title || 'Untitled'}</div>
@@ -250,7 +239,7 @@ export default function NotesWorkspace() {
                                                 className="p-1 rounded hover:bg-black/10 text-xs"
                                                 title="Archive"
                                             >
-                                                📦
+
                                             </button>
                                         )}
                                         <button
@@ -261,7 +250,7 @@ export default function NotesWorkspace() {
                                             className="p-1 rounded hover:bg-black/10 text-xs"
                                             title="Delete"
                                         >
-                                            🗑️
+                                            delete
                                         </button>
                                     </div>
                                 </div>
