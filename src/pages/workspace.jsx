@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext1';
 import { useDebounce } from '../hooks/useDebounce';
 import { noteService } from '../services/noteService';
@@ -341,7 +340,6 @@ export default function NotesWorkspace() {
                     </div>
                 )}
             </main>
-            <Footer />
         </div>
     );
 }
